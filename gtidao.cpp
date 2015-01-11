@@ -12,18 +12,15 @@ GTIDao::GTIDao(): dbManager()
 
         QStringList tables = dbManager.getDataBase().tables(QSql::AllTables);
         if (!tables.contains("GuitarTab")) {
-           QSqlQuery query = dbManager.getDataBase().exec("CREATE TABLE GuitarTab (path varchar(300) primary key, "
-                                                          "bandName varchar(100) default 'Unknown', "
-                                                          "summary varchar(200), "
-                                                          "songName varchar(100) default 'Unknown', "
-                                                          "extension varchar(10),"
-                                                          "created timestamp default CURRENT_TIMESTAMP);");
-         QSqlError error = query.lastError();
-         if (error.isValid()) {
-             std::cout<< "Error Occured, Database text: "<< error.databaseText().toStdString() << std::endl;
-             std::cout<< "Error Occured, Driver text: "<< error.driverText().toStdString() << std::endl;
-         }
-
+            execQuery("CREATE TABLE GuitarTab (path varchar(300) primary key, "
+                      "bandName varchar(100) default 'Unknown', "
+                      "summary varchar(200), "
+                      "songName varchar(100) default 'Unknown', "
+                      "extension varchar(10),"
+                      "created timestamp default CURRENT_TIMESTAMP);");
+        }
+        if (! tables.contains("extensions")) {
+            execQuery("CREATE TABLE extensions (extId integer auto increment primary key, extension varchar(10),summary varchar(100),isDefault integer);");
         }
     } else {
         throw dbManager.lastError();
@@ -34,6 +31,18 @@ GTIDao::GTIDao(): dbManager()
 GTIDao::~GTIDao()
 {
     dbManager.closeDB();
+}
+
+int GTIDao::execQuery(const char * queryString)
+{
+    QSqlQuery query = dbManager.getDataBase().exec(queryString);
+    QSqlError error = query.lastError();
+    if (error.isValid()) {
+        std::cout<< "Error Occured, Database text: "<< error.databaseText().toStdString() << std::endl;
+        std::cout<< "Error Occured, Driver text: "<< error.driverText().toStdString() << std::endl;
+        return -1;
+    }
+    return 0;
 }
 
 QList<GuitarTab> GTIDao::search(QString terms) {
@@ -82,3 +91,4 @@ GTIDao *GTIDao::getInstance()
 {
     return instance;
 }
+

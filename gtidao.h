@@ -14,6 +14,7 @@ public:
     void saveRecords(QList<GuitarTab> & tabs);
     static GTIDao * getInstance();
 private:
+  int execQuery(const char * query);
   GTIDataBaseManager dbManager;
   static GTIDao * instance;
 
