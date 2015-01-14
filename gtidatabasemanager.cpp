@@ -16,13 +16,12 @@ bool GTIDataBaseManager::openDB() {
 #ifdef Q_OS_MAC   // OSX
     // We have to Store database into user Documents folder
     m_filePath.append(QDir::separator()).append("Documents").append(QDir::separator()).append("GuitarTabIndexer");
-#elif Q_OS_UNIX // UNIX
+#elif __linux__ // UNIX
     // We have to Store database into user home folder
     m_filePath.append(QDir::separator()).append(".GuitarTabIndexer");
-#elif Q_OS_WIN // WINDOWS
+#elif _WIN32 // WINDOWS
     // We have to Store database into user home folder
     m_filePath = QStandardPaths::writableLocation(QStandardPaths::AppLocalDataLocation);
-    m_filePath.append(QDir::separator()).append("GuitarTabIndexer");
 #endif
     m_filePath = QDir::toNativeSeparators(m_filePath);
     QDir appDir(m_filePath);
